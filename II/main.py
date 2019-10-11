@@ -29,7 +29,7 @@ class HL7:
         pid = self.book.split('PID')[1]
         full_patient_name_str = pid.split('|')[5]
         full_patient_name_list = full_patient_name_str.split('^')
-        self.sur_name, self.sur_name, self.middle_name, self.suffiks = full_patient_name_list
+        self.sur_name, self.name, self.middle_name, self.suffiks = full_patient_name_list
 
     def view_patient_information(self):
         print(f"SurName: {self.sur_name}", f"Name: {self.sur_name}", f"middle name: {self.middle_name}",
@@ -47,16 +47,16 @@ class HL7:
         self.year_old = current_patient_year
 
     def save_to_set(self):
-        return [self.sur_name,
+        return (self.sur_name,
                 self.name,
                 self.middle_name,
                 self.suffiks,
-                self.data_burn,
+                self.data_burn.year,
                 self.year_old
-                ]
+                )
 
 
-all_patient = list()
+all_patient = set()
 
 directory = glob.glob("./HW2/Clinical_HL7_Samples/*.out")
 for i in directory:
@@ -65,15 +65,11 @@ for i in directory:
     hl7.find_patient_age()
     hl7.find_patient_name()
     hl7.find_current_age()
-    
+    all_patient.add(hl7.save_to_set())
 
 print(f"unique element: {len(all_patient)}")
 
-
-for i in all_patient:
-    i = list(i)
-
+all_patient = sorted(all_patient, key=lambda x: x[5], reverse=True)
 
 print(*all_patient, sep='\n')
 # print(*sorted(all_patient, ), sep='\n')
-
